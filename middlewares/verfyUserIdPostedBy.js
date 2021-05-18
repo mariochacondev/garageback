@@ -1,6 +1,5 @@
 const Comment = require('../models/Comment');
 
-
 module.exports.verfyUserIdPostedBy = async function (req, res, next) {
       userId = req.header('userId')
       postedById = await Comment.findById({ _id: req.params.commentId});
@@ -8,7 +7,7 @@ module.exports.verfyUserIdPostedBy = async function (req, res, next) {
         next() // role is allowed, so continue on the next middleware 
         return
       }
-        res.send('Forbidden')
+        res.status(401).send('Forbidden')
     
       
 }

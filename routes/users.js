@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const User = require('../models/User');
-const verify = require('./verifyToken');
-const {verifyRoles} = require('./verifyRoles');
+const verify = require('../middlewares/verifyToken');
+const {verifyRoles} = require('../middlewares/verifyRoles');
 
 
 router.get('/user', verify, verifyRoles('admin'), async (req, res) => {

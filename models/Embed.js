@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
 
+const reqString = {
+    type: String,
+    required: true,
+}
+
+
 
 
 const embedSchema = mongoose.Schema({
-    iFrame:{
-        type: String,
-        required: true
-    },
+    musicChart: {
+        iFrame: reqString,
+        genre: reqString 
+    }
 
 });
 

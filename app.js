@@ -6,7 +6,6 @@ require('dotenv/config');
 
 //IMPORT ROUTES
 const commentsRoute = require('./routes/comments');
-const authRoute = require('./routes/auth');
 const usersRoute = require('./routes/users');
 const embedRoute = require('./routes/embed');
 
@@ -18,7 +17,6 @@ app.use(express.json());
 
 
 //ROUTE MIDDLEWARE
-app.use('/user', authRoute);
 app.use('/comments', commentsRoute);
 app.use('/adminusers', usersRoute);
 app.use('/embed', embedRoute);

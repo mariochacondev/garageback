@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Comment = require('../models/Comment');
 const User = require('../models/User');
-const verifyToken = require('./verifyToken');
-const verfyUserIdPostedBy = require('./verfyUserIdPostedBy')
+const verifyToken = require('../middlewares/verifyToken');
+const {verfyUserIdPostedBy} = require('../middlewares/verfyUserIdPostedBy')
 
 
 

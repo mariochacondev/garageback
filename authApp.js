@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { loginValidation } = require('./validation');
+const { loginValidation, registerValidation } = require('./validation');
 require('dotenv/config');
 
 
@@ -14,17 +14,21 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// REFRESH TOKEN
 
 app.post('/token', (req, res) => {
-    const refreshToken = req.body.refreshToken
+    const refreshToken = req.header('refresh-token');
     if(refreshToken === null ) return res.sendStatus(401)
     if(!RefreshTokens.findOne(refreshToken)) return res.sendStatus(403)
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) =>{
         if (err) return res.sendStatus(403)
         const token = generateAccesToken({ username: user.username})
+        res.header('auth-token', token)
         res.json({ token: token })
     })
 })
+
+//LOGOUT
 
 
 app.delete('/logout', async (req, res) => {
@@ -37,6 +41,40 @@ app.delete('/logout', async (req, res) => {
         res.json({message:err});
     }
 })
+
+//REGISTER 
+
+app.post('/register', async (req, res) => {
+
+    //VALIDATE DATA
+    const { error } = registerValidation(req.body);
+    if(error) return res.status(400).send(error.details[0].message);
+
+    //CHECK IF THE USER IS ALRADY IN DATABASE
+    const emailExist = await User.findOne({email: req.body.email});
+    if(emailExist) return res.status(400).send('Votre email est déjà registré');
+
+    //HASH PASSWORD
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+
+    //CREATE NEW USER
+   const user = new User({
+        _id: new mongoose.Types.ObjectId(),
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword
+   });
+   try {
+    const savedUser = await user.save();
+    res.send("Votre Inscription est bien enregistré. <br>  Bonjour " + user.username  + " Bienvenue sur Garage");
+   } catch(err) {
+    console.log(err);
+    res.status(400).send(err);
+
+   }
+});
 
 //LOGIN
 
