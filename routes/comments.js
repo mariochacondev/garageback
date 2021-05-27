@@ -29,6 +29,16 @@ router.get('/myComments', verifyToken, async (req, res) => {
     }
   })
 
+// SPECIFIC COMMENT
+router.get('/:commentId', verifyToken, async (req, res) => {
+    try {
+     const comment = await Comment.findById(req.params.commentId).populate('postedBy');
+     res.json(comment);
+    } catch(err) {
+     res.json({message:err});
+    }
+ })
+
 //SUBMMIT COMMENTS
 router.post('/', verifyToken, async (req, res) => {
     const userId = req.header('userId')
@@ -48,16 +58,6 @@ router.post('/', verifyToken, async (req, res) => {
        res.json({message:err});
    }
 })
-
-// SPECIFIC COMMENT
-router.get('/:commentId', verifyToken, async (req, res) => {
-    try {
-     const comment = await Comment.findById(req.params.commentId).populate('postedBy');
-     res.json(comment);
-    } catch(err) {
-     res.json({message:err});
-    }
- })
 
 // DELETE COMMENT
 router.delete('/:commentId', verifyToken, verfyUserIdPostedBy, async (req, res) => {

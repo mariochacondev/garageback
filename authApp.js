@@ -16,10 +16,10 @@ app.use(express.json());
 
 // REFRESH TOKEN
 
-app.post('/token', (req, res) => {
-    const refreshToken = req.header('refresh-token');
+app.post('/token/:token', (req, res) => {
+    const refreshToken = req.params.token
     if(refreshToken === null ) return res.sendStatus(401)
-    if(!RefreshTokens.findOne(refreshToken)) return res.sendStatus(403)
+    if(!RefreshTokens.findOne(req.params.token)) return res.sendStatus(403)
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) =>{
         if (err) return res.sendStatus(403)
         const token = generateAccesToken({ username: user.username})
@@ -31,10 +31,9 @@ app.post('/token', (req, res) => {
 //LOGOUT
 
 
-app.delete('/logout', async (req, res) => {
-    const refreshToken = req.header('refresh-token')
+app.delete('/logout/:token', async (req, res) => {
     try {
-    const deletedTokens = await RefreshTokens.deleteOne({ token: refreshToken });
+    const deletedToken = await RefreshTokens.findOneAndDelete(req.params.token)
     res.sendStatus(200)
     } catch(err) {
         console.log(err)

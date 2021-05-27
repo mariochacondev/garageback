@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Embed = require('../models/Embed');
-const verify = require('../middlewares/verifyToken');
+const verifyToken = require('../middlewares/verifyToken');
 const {verifyRoles} = require('../middlewares/verifyRoles');
 
 
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 
 
 //SUBMIT EMBED
-router.post('/', verify, verifyRoles('admin'), async (req, res) => {
+router.post('/', verifyToken, verifyRoles('admin'), async (req, res) => {
     const embed = new Embed({
         musicChart: {
        iFrame: req.body.iFrame,
@@ -36,7 +36,7 @@ router.post('/', verify, verifyRoles('admin'), async (req, res) => {
 
 
 //DELETE EMBED
-router.delete('/:embedId', verify, verifyRoles('admin'), async (req, res) => {
+router.delete('/:embedId', verifyToken, verifyRoles('admin'), async (req, res) => {
     try {
         const removedEmbed = await Embed.deleteOne({ _id: req.params.embedId });
         res.status(200).json(removedEmbed);
